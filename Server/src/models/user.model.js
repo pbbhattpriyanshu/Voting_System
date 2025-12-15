@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
     {
@@ -9,7 +10,7 @@ const userSchema = new mongoose.Schema(
             type: Number, required: true
         },
         email: {
-            type: String, unique: true
+            type: String, unique: true, required: true
         },
         phone: {
             type: String
@@ -34,6 +35,23 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+
+
+//Hashes a plain text password using bcrypt with a salt round of 10 - Signup
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+
+//compare password with hashed password - Login
+userSchema.methods.comparePassword = async function(password) {
+    const isPasswordCorrect = await bcrypt.compare(password, this.password);
+    return isPasswordCorrect;
+};
 
 
 const User = mongoose.model("User", userSchema);
