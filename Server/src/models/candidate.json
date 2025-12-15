@@ -1,0 +1,16 @@
+{
+    "name": "Kumar Neeraj",
+    "party": "Chai",
+    "age": 34,
+    "symbolPic": "Chai",
+    "votes": [
+        {
+            "user": "54tgg45y67y657634676576",
+            "voteAt": "time"
+        },
+        {
+            "user": "54tgg45y677677y657634676576",
+            "voteAt": "time"
+        }
+    ]
+}
