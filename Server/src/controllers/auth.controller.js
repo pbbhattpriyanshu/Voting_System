@@ -113,3 +113,11 @@ export const login = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//Logout controller
+//Logout Controller
+export const logout = async (req, res) => {
+  res.clearCookie("jwt");
+  console.log("User Logout Sucessfully");
+  res.status(201).json({ message: "Logout Successful" });
+};
