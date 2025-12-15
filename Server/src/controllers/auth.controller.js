@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import * as authService from "../services/auth.service.js";
 
 //Signup controller
 export const signup = async (req, res) => {
@@ -11,27 +12,43 @@ export const signup = async (req, res) => {
   }
 
   try {
-    const data = req.body;
+    const { name, adharNumber, password, email, address, age, phone } =
+      req.body;
+    console.log(password);
 
     // Manual validations (basic business logic)
-    if (!data.name || !data.adharNumber || !data.password || !data.email || !data.address || !data.age) {
-      return res.status(400).json({ message: "all fields are required"});
+    if (!name || !adharNumber || !password || !email || !address || !age) {
+      return res.status(400).json({ message: "all fields are required" });
     }
 
     if (password.length <= 8) {
-      return res.status(400).json({message: "Password must at least 8 characters long"});
+      return res
+        .status(400)
+        .json({ message: "Password must at least 8 characters long" });
     }
 
     //Check user already exist?
-    const existingUser = await User.findOne({ adharNumber: data.adharNumber });
+    const existingUser = await User.findOne({ adharNumber: adharNumber });
     if (existingUser) {
-      return res.status(400).json({message: "Adhar number is already exist, please use different one"});
+      return res
+        .status(400)
+        .json({
+          message: "Adhar number is already exist, please use different one",
+        });
     }
 
-    console.log(data.name, data.adharNumber, data.password);
+    console.log(name, adharNumber, password);
 
     // Create user
-    const newUser = await authService.createUser({ name: data.name, email: data.email, password: data.password, adharNumber: data.adharNumber, address: data.address, age: data.age, phone: data.phone });
+    const newUser = await authService.createUser({
+      name,
+      email,
+      password,
+      adharNumber,
+      address,
+      age,
+      phone,
+    });
 
     // Generate JWT Token
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
@@ -75,10 +92,12 @@ export const login = async (req, res) => {
 
   try {
     const { adharNumber, password } = req.body;
-    
+
     const user = await User.findOne({ adharNumber });
     if (!user) {
-      return res.status(401).json({ message: "Invalid adhar number or password" });
+      return res
+        .status(401)
+        .json({ message: "Invalid adhar number or password" });
     }
     const isPasswordCorrect = await user.comparePassword(password);
 
