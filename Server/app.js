@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import connect from './src/config/mongodb.config.js';
 
 const app = express();
+connect();
 
 app.use(cors({
   origin: 'http://localhost:3000',
