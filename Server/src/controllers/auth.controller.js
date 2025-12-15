@@ -115,7 +115,6 @@ export const login = async (req, res) => {
 };
 
 //Logout controller
-//Logout Controller
 export const logout = async (req, res) => {
   res.clearCookie("jwt");
   console.log("User Logout Sucessfully");
