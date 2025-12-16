@@ -153,6 +153,31 @@ export const profile = async (req, res) => {
   }
 };
 
+// Password Controller
+export const password = async (req, res) => {
+  try {
+    const userId = req.user;
+    const {currentPassword, newPassword} = req.body;
+
+    const user = await User.findById(userId);
+    const isPasswordCorrect = await user.comparePassword(currentPassword);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        message: "Current password is incorrect",
+      });
+    }
+    user.password = newPassword;
+    await user.save();
+    console.log("User password changed " + user.name);
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    console.error("Error in password controller", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 // Logout Controller
 export const logout = async (req, res) => {
