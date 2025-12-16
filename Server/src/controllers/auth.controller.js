@@ -3,9 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import * as authService from "../services/auth.service.js";
 
-/* =========================
-   Signup Controller
-========================= */
+// Signup Controller
 export const signup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -78,9 +76,7 @@ export const signup = async (req, res) => {
   }
 };
 
-/* =========================
-   Login Controller
-========================= */
+// Login Controller
 export const login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -122,7 +118,7 @@ export const login = async (req, res) => {
     });
 
     const { password: _, ...userData } = user._doc;
-
+    console.log("User login " + userData.name);
     return res.status(200).json({
       success: true,
       user: userData,
@@ -133,9 +129,7 @@ export const login = async (req, res) => {
   }
 };
 
-/* =========================
-   Logout Controller
-========================= */
+// Logout Controller
 export const logout = async (req, res) => {
   res.clearCookie("jwt", {
     httpOnly: true,
@@ -143,6 +137,7 @@ export const logout = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
   });
 
+  console.log("User logout");
   return res.status(200).json({
     success: true,
     message: "Logout successful",
