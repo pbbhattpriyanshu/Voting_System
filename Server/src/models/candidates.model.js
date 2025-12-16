@@ -14,9 +14,6 @@ const candidateSchema = new mongoose.Schema(
         symbolPic: {
             type: String, required: true
         },
-        isApproved: {
-            type: Boolean, default: false, required: true
-        },
         votes: [
             {
                 user: {

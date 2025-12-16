@@ -11,7 +11,7 @@ export const signup = async (req, res) => {
   }
 
   try {
-    const { name, adharNumber, password, email, address, age, phone } = req.body;
+    const { name, adharNumber, password, email, address, age, phone, role } = req.body;
 
     // Basic validation
     if (!name || !adharNumber || !password || !email || !address || age === undefined) {
@@ -41,6 +41,7 @@ export const signup = async (req, res) => {
       address,
       age,
       phone,
+      role
     });
 
     // Generate JWT
