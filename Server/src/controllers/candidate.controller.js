@@ -94,3 +94,27 @@ export const updateCandidate = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+//DELETE Route to delete a candidate
+export const deleteCandidate = async (req, res) => {
+    try {
+        if (!(await checkAdminRole(req.user))) {
+            return res.status(403).json({ message: "Access denied. Admins only." });
+        }
+        const candidateId = req.params.id;
+        const deletedCandidate = await Candidate.findByIdAndDelete(candidateId);
+        if (!deletedCandidate) {
+            return res.status(404).json({ message: "Candidate not found" });
+        }
+        console.log("Candidate is Deleted Sucessfully");
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Candidate deleted successfully",
+            });
+    } catch (error) {
+        console.error("Error in deleteCandidate controller", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
