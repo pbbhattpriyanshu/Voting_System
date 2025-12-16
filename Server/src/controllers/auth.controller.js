@@ -129,6 +129,31 @@ export const login = async (req, res) => {
   }
 };
 
+// Profile Controller
+export const profile = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const responseData = {
+      name: user.name,
+      age: user.age,
+      adharNumber: user.adharNumber,
+      role: user.role,
+    };
+
+    console.log("User profile accessed:", responseData.name);
+
+    res.status(200).json({
+      success: true,
+      user: responseData,
+    });
+  } catch (error) {
+    console.error("Error in profile controller", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 // Logout Controller
 export const logout = async (req, res) => {
   res.clearCookie("jwt", {
