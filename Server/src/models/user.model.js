@@ -39,13 +39,13 @@ const userSchema = new mongoose.Schema(
 
 
 //Hashes a plain text password using bcrypt with a salt round of 10 - Signup
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
+
 
 
 //compare password with hashed password - Login

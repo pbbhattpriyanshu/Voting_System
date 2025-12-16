@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 
 //Service: Create a new user (Sign up)
-export const createUser = async ({ name, email, password }) => {
+export const createUser = async ({ name, email, password, age, adharNumber, phone, address }) => {
 
   //Create and save User
   const user = await User.create({
@@ -10,7 +10,8 @@ export const createUser = async ({ name, email, password }) => {
     email,
     adharNumber,
     address,
-    password
+    password,
+    phone,
   })
 
   return user; //send back to controller
