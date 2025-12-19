@@ -1,6 +1,22 @@
 import Candidate from "../models/candidates.model.js";
 import User from "../models/user.model.js";
 
+
+//Show list of all Candidates
+export const showCandidates = async (req, res) => {
+  try {
+    const candidates = await Candidate.find().select("name party");
+    return res.status(200).json({
+      success: true,
+      candidates,
+    });
+  } catch (error) {
+    console.error("Error in showCandidates controller", error);
+    res.status(500).json({ message: "Server error" });
+  };
+}
+
+
 // Vote for a candidate
 export const voteToCandidate = async (req, res) => {
   try {
