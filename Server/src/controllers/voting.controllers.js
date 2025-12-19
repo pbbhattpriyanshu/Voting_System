@@ -42,7 +42,24 @@ export const voteToCandidate = async (req, res) => {
 
         return res.status(200).json({sucess: true, message: 'Vote recorded Sucessfully'})
     } catch(error){
-        console.error("Error in deleteCandidate controller", error);
+        console.error("Error in voteToCandidate controller", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+//Vote Count
+export const getVoteCount = async(req, res) => {
+    try {
+        //find all candidates and sort by voteCount in descending order
+        const candidate = await Candidate.find().sort({voteCount: 'desc'});
+
+        //Map the candidates to include only their name and voteCount
+        const voteRecord = candidate.map((data) => {
+            return {name: data.party, voteCount: data.voteCount};
+        })
+        return res.status(200).json({candidates: voteRecord});
+    } catch (error) {
+        console.error("Error in getVoteCount controller", error);
         res.status(500).json({ message: "Server error" });
     }
 }
