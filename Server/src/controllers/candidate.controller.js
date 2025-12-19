@@ -13,48 +13,42 @@ const checkAdminRole = async (userId) => {
     }
 };
 
-//Post Route to refister a new candidate
+//Post Route to register a new candidate
 export const registerCandidate = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied. Admins only." });
     }
 
-    try {
-        if (!(await checkAdminRole(req.user))) {
-            return res.status(403).json({ message: "Access denied. Admins only." });
-        }
-        //Extract Candidate Details from request body
-        const { name, age, party, symbolPic, isApproved } = req.body;
+    const { name, age, party, symbolPic } = req.body;
 
-        //Basic Validation
-        if (!name || !age || !party || !symbolPic) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
-        //Create new Candidate
-        const newCandidate = new Candidate({
-            name,
-            age,
-            party,
-            symbolPic,
-            isApproved,
-        });
-        await newCandidate.save();
-
-        console.log("Candidate is Created Sucessfully");
-        return res
-            .status(201)
-            .json({
-                success: true,
-                message: "Candidate registered successfully",
-                candidate: newCandidate,
-            });
-    } catch (error) {
-        console.error("Error in registerCandidate controller", error);
-        res.status(500).json({ message: "Server error" });
+    if (!name || !age || !party || !symbolPic) {
+      return res.status(400).json({ message: "All fields are required" });
     }
+
+    const newCandidate = await Candidate.create({
+      name,
+      age,
+      party,
+      symbolPic,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Candidate registered successfully",
+      candidate: newCandidate,
+    });
+  } catch (error) {
+    console.error("Error in registerCandidate controller", error);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 //PUT Route to update candidate details
 export const updateCandidate = async (req, res) => {
