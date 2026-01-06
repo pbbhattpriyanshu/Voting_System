@@ -122,7 +122,7 @@ JWT_SECRET=your_jwt_secret_here
 
 ## API Endpoints (Quick) 🚀
 
-> Base URL: `http://localhost:3000` (unless overridden by `PORT`)
+> Base URL: `http://localhost:4000` (unless overridden by `PORT`)
 
 ### Auth
 

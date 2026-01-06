@@ -1,0 +1,23 @@
+# 1. Base image
+FROM node:18-alpine
+
+# 2. App directory
+WORKDIR /app
+
+# 3. Copy dependency files
+COPY package*.json ./
+
+# 4. Install dependencies
+RUN npm install --production
+
+# 5. Copy application source
+COPY src ./src
+COPY server.js .
+COPY app.js .
+COPY config ./config
+
+# 6. Expose correct port
+EXPOSE 4000
+
+# 7. Start app
+CMD ["node", "server.js"]
