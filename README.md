@@ -200,7 +200,7 @@ This project is licensed under the MIT License — see the `LICENSE` file for de
 
 ---
 
-If you'd like, I can also:
+If you'd like, I can also: mongodb+srv://bhattpriyanshupcm007_db_user:r6XnGayaZQys8P4hu@main-cluster.5y7vsyl.mongodb.net/?appName=main-cluster
 
 - Add images/screenshots to the repo
 - Generate a prettier SVG flowchart and commit it to `Assets/`
