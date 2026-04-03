@@ -19,7 +19,7 @@ jobs:
 
     # 🔹 Build Backend
     - name: Build Backend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v2 ./Server
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3 ./Server
 
     # 🔹 Build Frontend
     - name: Build Frontend Image
@@ -28,7 +28,7 @@ jobs:
     # 🔹 Push Images
     - name: Push Images
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v2
+        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
         docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
 
     # 🔹 Deploy to EC2
@@ -39,7 +39,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v2
+          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
           docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
 
           docker rm -f backend || true
@@ -48,7 +48,7 @@ jobs:
           docker run -d -p 5000:5000 --name backend --restart always \
           -e DB_CONNECT='${{ secrets.DB_CONNECT }}' \
           -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
-          ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v2
+          ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
 
           docker run -d -p 80:80 --name frontend --restart always \
           ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
