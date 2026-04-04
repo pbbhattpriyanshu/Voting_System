@@ -19,17 +19,17 @@ jobs:
 
     # 🔹 Build Backend
     - name: Build Backend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3 ./Server
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v4 ./Server
 
     # 🔹 Build Frontend
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1 ./Client
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2 ./Client
 
     # 🔹 Push Images
     - name: Push Images
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
-        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
+        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v4
+        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
 
     # 🔹 Deploy to EC2
     - name: Deploy to EC2
@@ -39,16 +39,16 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
-          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
+          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v4
+          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
 
           docker rm -f backend || true
           docker rm -f frontend || true
 
-          docker run -d -p 5000:5000 --name backend --restart always \
+          docker run -d -p 4000:4000 --name backend --restart always \
           -e DB_CONNECT='${{ secrets.DB_CONNECT }}' \
           -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
-          ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v3
+          ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v4
 
           docker run -d -p 80:80 --name frontend --restart always \
-          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v1
+          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
