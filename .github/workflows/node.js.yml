@@ -52,3 +52,4 @@ jobs:
 
           docker run -d -p 80:80 --name frontend --restart always \
           ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
+          
