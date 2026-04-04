@@ -11,7 +11,7 @@ jobs:
     steps:
     
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # 🔹 Login to DockerHub
     - name: Login to DockerHub
@@ -23,13 +23,13 @@ jobs:
 
     # 🔹 Build Frontend
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3 ./Client
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4 ./Client
 
     # 🔹 Push Images
     - name: Push Images
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
-        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
+        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
 
     # 🔹 Deploy to EC2
     - name: Deploy to EC2
@@ -40,16 +40,22 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
-          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
+          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
 
           docker rm -f backend || true
           docker rm -f frontend || true
 
-          docker run -d -p 4000:4000 --name backend --restart always \
+          docker run -d -p 4000:4000 \
+          --name backend \
+          --network app-network \
+          --restart always \
           -e DB_CONNECT='${{ secrets.DB_CONNECT }}' \
           -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
           ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
 
-          docker run -d -p 80:80 --name frontend --restart always \
-          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
+          docker run -d -p 80:80 \
+          --name frontend \
+          --network app-network \
+          --restart always \
+          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
           
