@@ -23,13 +23,13 @@ jobs:
 
     # 🔹 Build Frontend
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2 ./Client
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3 ./Client
 
     # 🔹 Push Images
     - name: Push Images
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
-        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
+        docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
 
     # 🔹 Deploy to EC2
     - name: Deploy to EC2
@@ -40,7 +40,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
-          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
+          docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
 
           docker rm -f backend || true
           docker rm -f frontend || true
@@ -51,5 +51,5 @@ jobs:
           ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
 
           docker run -d -p 80:80 --name frontend --restart always \
-          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v2
+          ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v3
           
