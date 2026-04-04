@@ -11,7 +11,7 @@ connect();
 
 app.use(cors({
   origin: ['http://localhost:5173',
-    'http://13.204.87.110'
+    'http://13.233.155.142'
   ],
 
   credentials: true,
