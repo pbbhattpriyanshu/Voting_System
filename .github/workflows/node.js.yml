@@ -9,29 +9,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
+    # 🔹 1. Checkout code
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 🔹 Login to DockerHub
+    # 🔹 2. Login to DockerHub
     - name: Login to DockerHub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    # 🔹 Build Backend
+    # 🔹 3. Build Backend Image
     - name: Build Backend Image
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5 ./Server
 
-    # 🔹 Build Frontend
+    # 🔹 4. Build Frontend Image
     - name: Build Frontend Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4 ./Client
+      run: docker build --no-cache -t ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4 ./Client
 
-    # 🔹 Push Images
+    # 🔹 5. Push Images
     - name: Push Images
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
         docker push ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
 
-    # 🔹 Deploy to EC2
+    # 🔹 6. Deploy to EC2
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -39,12 +40,19 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+
+          # Create network if not exists
+          docker network create app-network || true
+
+          # Pull latest images
           docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
           docker pull ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
 
+          # Remove old containers
           docker rm -f backend || true
           docker rm -f frontend || true
 
+          # Run backend
           docker run -d -p 4000:4000 \
           --name backend \
           --network app-network \
@@ -53,9 +61,12 @@ jobs:
           -e JWT_SECRET='${{ secrets.JWT_SECRET }}' \
           ${{ secrets.DOCKER_USERNAME }}/voting-system-server:v5
 
+          # Run frontend
           docker run -d -p 80:80 \
           --name frontend \
           --network app-network \
           --restart always \
           ${{ secrets.DOCKER_USERNAME }}/voting-system-client:v4
-          
+
+          # Cleanup unused images
+          docker image prune -f
