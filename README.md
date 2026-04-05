@@ -33,9 +33,9 @@ A clean, minimal, and extendable Voting System built with Node.js, Express and M
 
 ## Tech Stack 🧰
 
-- Node.js + Express
-- MongoDB (Mongoose)
-- dotenv for configuration
+- **Backend**: Node.js + Express, MongoDB (Mongoose), dotenv
+- **Frontend** (Client): React / Vite (via Nginx proxy)
+- **DevOps & Deployment**: Docker, GitHub Actions (CI/CD), Nginx, AWS EC2
 
 ---
 
@@ -122,17 +122,17 @@ JWT_SECRET=your_jwt_secret_here
 
 ## API Endpoints (Quick) 🚀
 
-> Base URL: `http://localhost:4000` (unless overridden by `PORT`)
+> Base URL: `http://localhost:4000` (Local) / `/voteadhikar` (API Prefix)
 
 ### Auth
 
-- POST `/api/auth/register` — Register a new user
-- POST `/api/auth/login` — Login and receive JWT
+- POST `/voteadhikar/auth/register` — Register a new user
+- POST `/voteadhikar/auth/login` — Login and receive JWT
 
 Register example:
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:4000/voteadhikar/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"alice","password":"secret"}'
 ```
@@ -140,20 +140,29 @@ curl -X POST http://localhost:3000/api/auth/register \
 Login example:
 
 ```bash
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:4000/voteadhikar/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"alice","password":"secret"}'
 ```
 
 ### Candidates
 
-- GET `/api/candidates` — List candidates
-- POST `/api/candidates` — Add candidate (protected)
+- GET `/voteadhikar/candidate` — List candidates
+- POST `/voteadhikar/candidate` — Add candidate (protected)
 
 ### Voting
 
-- POST `/api/vote` — Cast a vote (protected)
-- GET `/api/results` — Get aggregated results
+- POST `/voteadhikar/voting/vote` — Cast a vote (protected)
+- GET `/voteadhikar/voting/results` — Get aggregated results
+
+---
+
+## CI/CD Pipeline & Deployment 🚢
+
+This project uses **GitHub Actions** for CI/CD and is deployed to an AWS EC2 instance.
+- **Dockerized**: Distinct Docker images are built for the Frontend (`voting-system-client`) and Backend (`voting-system-server`).
+- **Nginx Reverse Proxy**: Used to smoothly route API requests via the `/voteadhikar/` prefix to the Node.js backend.
+- **Automated Deployments**: Pushing to the `main` branch automatically builds the images, pushes them to DockerHub, and triggers an SSH deployment script on the EC2 instance to restart the Docker containers.
 
 ---
 
